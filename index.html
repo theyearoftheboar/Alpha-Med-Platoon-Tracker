@@ -1,0 +1,1294 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Med Hold Accountability Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #111827;
+            color: #f3f4f6;
+            padding: 16px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #1f2937;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .header h1 {
+            color: #34d399;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: #374151;
+            border: none;
+            border-radius: 8px;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .tab.active {
+            background: #34d399;
+            color: #111827;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-primary { background: #059669; color: white; }
+        .btn-primary:hover { background: #047857; }
+        .btn-secondary { background: #3b82f6; color: white; }
+        .btn-secondary:hover { background: #2563eb; }
+        .btn-danger { background: #dc2626; color: white; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-gray { background: #4b5563; color: white; }
+        .btn-gray:hover { background: #374151; }
+        .btn-info { background: #7c3aed; color: white; }
+        .btn-info:hover { background: #6d28d9; }
+        .card {
+            background: #1f2937;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .person-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .person-card:hover {
+            background: #253142;
+        }
+        .person-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #34d399;
+        }
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-left: 8px;
+        }
+        .badge-bmm { background: #f59e0b; color: white; }
+        .badge-profile { background: #7c3aed; color: white; }
+        input[type="text"], input[type="date"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 12px;
+            font-family: inherit;
+        }
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin: 0;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #d1d5db;
+            font-size: 14px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .formation-detail {
+            background: #374151;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .formation-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #34d399;
+            margin-bottom: 16px;
+        }
+        .stats-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-box {
+            background: #1f2937;
+            padding: 16px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .stat-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #f3f4f6;
+            margin: 24px 0 12px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #374151;
+        }
+        .checklist-item {
+            background: #1f2937;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .checklist-name {
+            font-weight: 500;
+            color: #f3f4f6;
+            flex: 1;
+            min-width: 150px;
+        }
+        .checklist-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .status-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            background: #374151;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .status-btn.active {
+            border-color: currentColor;
+            font-weight: bold;
+        }
+        .status-btn.present { color: #34d399; }
+        .status-btn.present.active { background: #065f46; color: #34d399; }
+        .status-btn.ftr { color: #f59e0b; }
+        .status-btn.ftr.active { background: #78350f; color: #f59e0b; }
+        .status-btn.late { color: #dc2626; }
+        .status-btn.late.active { background: #7f1d1d; color: #dc2626; }
+        .absence-item {
+            background: #1f2937;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid #dc2626;
+        }
+        .absence-name {
+            font-weight: bold;
+            color: #f3f4f6;
+            margin-bottom: 4px;
+        }
+        .absence-reason {
+            color: #9ca3af;
+            font-size: 13px;
+        }
+        .bmm-item {
+            background: #1f2937;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid #f59e0b;
+        }
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .search-bar {
+            flex: 1;
+            min-width: 200px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #1f2937;
+            padding: 24px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #34d399;
+            margin-bottom: 16px;
+        }
+        .formation-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .formation-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 16px;
+            background: #374151;
+            border: 2px solid #4b5563;
+            border-radius: 8px;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .formation-btn.active {
+            background: #065f46;
+            border-color: #34d399;
+            color: #34d399;
+        }
+        .checkbox-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .checkbox-item {
+            background: #374151;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .checkbox-item label {
+            margin: 0;
+            color: #f3f4f6;
+            font-size: 15px;
+            cursor: pointer;
+            flex: 1;
+        }
+        .history-item {
+            background: #374151;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid #f59e0b;
+        }
+        .history-date {
+            font-weight: bold;
+            color: #fbbf24;
+            margin-bottom: 4px;
+        }
+        .history-detail {
+            color: #d1d5db;
+            font-size: 13px;
+        }
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+            .checklist-actions {
+                width: 100%;
+            }
+            .status-btn {
+                flex: 1;
+            }
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Med Hold Accountability</h1>
+            <p style="color: #9ca3af;">Personnel Tracking System</p>
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('roster')">Personnel Roster</button>
+                <button class="tab" onclick="switchTab('today')">Today's Formations</button>
+                <button class="tab" onclick="switchTab('future')">Future Absences</button>
+                <button class="tab" onclick="switchTab('self')">Self-Report Absence</button>
+            </div>
+        </div>
+
+        <!-- ROSTER TAB -->
+        <div id="roster-tab" class="tab-content active">
+            <div class="card">
+                <h2 style="color: #34d399; margin-bottom: 16px;">Platoon Roster</h2>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="showAddPersonModal()">➕ Add Person</button>
+                    <button class="btn btn-secondary" onclick="exportData()">⬇️ Export Data</button>
+                    <label class="btn btn-secondary" style="margin: 0; cursor: pointer;">
+                        ⬆️ Import Data
+                        <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importData(event)">
+                    </label>
+                </div>
+                <div id="roster-list"></div>
+            </div>
+        </div>
+
+        <!-- TODAY'S FORMATIONS TAB -->
+        <div id="today-tab" class="tab-content">
+            <div class="card">
+                <h2 style="color: #34d399; margin-bottom: 8px;">Today's Formations</h2>
+                <p style="color: #9ca3af; margin-bottom: 24px;" id="today-date"></p>
+                
+                <div class="formation-selector">
+                    <button class="formation-btn active" onclick="selectFormation('0800')">0800</button>
+                    <button class="formation-btn" onclick="selectFormation('1100')">1100</button>
+                    <button class="formation-btn" onclick="selectFormation('1400')">1400</button>
+                </div>
+
+                <div id="formation-detail"></div>
+            </div>
+        </div>
+
+        <!-- FUTURE ABSENCES TAB -->
+        <div id="future-tab" class="tab-content">
+            <div class="card">
+                <h2 style="color: #34d399; margin-bottom: 16px;">Scheduled Future Absences</h2>
+                <div class="controls">
+                    <input type="text" id="future-search" class="search-bar" placeholder="Search by name...">
+                    <button class="btn btn-gray" onclick="clearFutureSearch()">Clear</button>
+                </div>
+                <div id="future-absences-list"></div>
+            </div>
+        </div>
+
+        <!-- SELF-REPORT TAB -->
+        <div id="self-tab" class="tab-content">
+            <div class="card">
+                <h2 style="color: #34d399; margin-bottom: 24px;">Report Your Absence</h2>
+                
+                <div class="form-group">
+                    <label>Select Your Name *</label>
+                    <select id="self-name">
+                        <option value="">-- Select Your Name --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Date of Absence *</label>
+                    <input type="date" id="self-date">
+                </div>
+
+                <div class="form-group">
+                    <label>Formation(s) You'll Miss *</label>
+                    <div class="checkbox-list">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="self-0800" value="0800">
+                            <label for="self-0800">0800 Formation</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="self-1100" value="1100">
+                            <label for="self-1100">1100 Formation</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="self-1400" value="1400">
+                            <label for="self-1400">1400 Formation</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Reason for Absence *</label>
+                    <select id="self-reason" onchange="toggleNotesRequired()">
+                        <option value="Medical Appointment">Medical Appointment</option>
+                        <option value="Physical Therapy">Physical Therapy</option>
+                        <option value="Mental Health Appointment">Mental Health Appointment</option>
+                        <option value="Leave">Leave</option>
+                        <option value="Pass">Pass</option>
+                        <option value="Staff Duty">Staff Duty</option>
+                        <option value="Tasking">Tasking</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label id="self-notes-label">Additional Details (Optional)</label>
+                    <textarea id="self-notes" rows="3" placeholder="Any additional information..."></textarea>
+                </div>
+
+                <button class="btn btn-primary" onclick="submitSelfReport()" style="width: 100%;">Submit Absence Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD PERSON MODAL -->
+    <div id="add-person-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Add New Person</h3>
+            <div class="form-group">
+                <label>First Name *</label>
+                <input type="text" id="new-firstname">
+            </div>
+            <div class="form-group">
+                <label>Last Name *</label>
+                <input type="text" id="new-lastname">
+            </div>
+            <div class="form-group">
+                <label>Rank *</label>
+                <select id="new-rank">
+                    <option value="">-- Select Rank --</option>
+                    <option value="2LT">2LT</option>
+                    <option value="1LT">1LT</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="new-bmm">
+                    <label for="new-bmm">BMM (Borrowed Military Manpower)</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Profile</label>
+                <select id="new-profile">
+                    <option value="">None</option>
+                    <option value="Upper Body">Upper Body</option>
+                    <option value="Lower Body">Lower Body</option>
+                    <option value="Internal Health">Internal Health</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="addPerson()">Add</button>
+                <button class="btn btn-gray" onclick="closeModal('add-person-modal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT PERSON MODAL -->
+    <div id="edit-person-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Edit Person</h3>
+            <input type="hidden" id="edit-id">
+            <div class="form-group">
+                <label>First Name *</label>
+                <input type="text" id="edit-firstname">
+            </div>
+            <div class="form-group">
+                <label>Last Name *</label>
+                <input type="text" id="edit-lastname">
+            </div>
+            <div class="form-group">
+                <label>Rank *</label>
+                <select id="edit-rank">
+                    <option value="">-- Select Rank --</option>
+                    <option value="2LT">2LT</option>
+                    <option value="1LT">1LT</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="edit-bmm">
+                    <label for="edit-bmm">BMM (Borrowed Military Manpower)</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Profile</label>
+                <select id="edit-profile">
+                    <option value="">None</option>
+                    <option value="Upper Body">Upper Body</option>
+                    <option value="Lower Body">Lower Body</option>
+                    <option value="Internal Health">Internal Health</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="savePerson()">Save</button>
+                <button class="btn btn-gray" onclick="closeModal('edit-person-modal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PERSON HISTORY MODAL -->
+    <div id="history-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title" id="history-title">Formation History</h3>
+            <div id="history-content"></div>
+            <button class="btn btn-gray" onclick="closeModal('history-modal')" style="width: 100%; margin-top: 16px;">Close</button>
+        </div>
+    </div>
+
+    <!-- CATEGORY VIEW MODAL -->
+    <div id="category-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title" id="category-title">Category</h3>
+            <div id="category-content"></div>
+            <button class="btn btn-gray" onclick="closeModal('category-modal')" style="width: 100%; margin-top: 16px;">Close</button>
+        </div>
+    </div>
+
+    <script>
+        let personnel = [];
+        let absences = [];
+        let formationStatus = {};
+        let currentFormation = '0800';
+        let futureSearchTerm = '';
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+            document.getElementById(tab + '-tab').classList.add('active');
+            
+            if (tab === 'today') {
+                document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                renderFormationDetail();
+            }
+            if (tab === 'future') renderFutureAbsences();
+            if (tab === 'self') populateSelfReportNames();
+        }
+
+        function selectFormation(time) {
+            currentFormation = time;
+            document.querySelectorAll('.formation-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[onclick="selectFormation('${time}')"]`).classList.add('active');
+            renderFormationDetail();
+        }
+
+        function showCategoryView(category, categoryName) {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('category-title').textContent = `${currentFormation} Formation - ${categoryName}`;
+
+            const bmmPersonnel = personnel.filter(p => p.bmm);
+            const expectedPersonnel = currentFormation === '0800' 
+                ? personnel 
+                : personnel.filter(p => !p.bmm);
+
+            const todayAbsences = absences.filter(a => 
+                a.date === today && a.formations.includes(currentFormation)
+            );
+
+            const appointmentReasons = ['Medical Appointment', 'Physical Therapy', 'Mental Health Appointment'];
+            let peopleInCategory = [];
+
+            if (category === 'present') {
+                expectedPersonnel.forEach(p => {
+                    const isAbsent = todayAbsences.some(a => a.personId === p.id);
+                    if (!isAbsent) {
+                        const statusKey = `${today}-${currentFormation}-${p.id}`;
+                        if (formationStatus[statusKey] === 'present') {
+                            peopleInCategory.push(p);
+                        }
+                    }
+                });
+            } else if (category === 'appointment') {
+                todayAbsences.filter(a => appointmentReasons.includes(a.reason)).forEach(a => {
+                    const person = personnel.find(p => p.id === a.personId);
+                    if (person) peopleInCategory.push({ ...person, reason: a.reason, notes: a.notes });
+                });
+            } else if (category === 'absent') {
+                todayAbsences.filter(a => !appointmentReasons.includes(a.reason) && a.reason !== 'Leave' && a.reason !== 'Pass').forEach(a => {
+                    const person = personnel.find(p => p.id === a.personId);
+                    if (person) peopleInCategory.push({ ...person, reason: a.reason, notes: a.notes });
+                });
+            } else if (category === 'ftr') {
+                expectedPersonnel.forEach(p => {
+                    const isAbsent = todayAbsences.some(a => a.personId === p.id);
+                    if (!isAbsent) {
+                        const statusKey = `${today}-${currentFormation}-${p.id}`;
+                        if (formationStatus[statusKey] === 'ftr') {
+                            peopleInCategory.push(p);
+                        }
+                    }
+                });
+            } else if (category === 'late') {
+                expectedPersonnel.forEach(p => {
+                    const isAbsent = todayAbsences.some(a => a.personId === p.id);
+                    if (!isAbsent) {
+                        const statusKey = `${today}-${currentFormation}-${p.id}`;
+                        const status = formationStatus[statusKey];
+                        if (status && status.startsWith('late')) {
+                            peopleInCategory.push({ ...p, lateType: status });
+                        }
+                    }
+                });
+            } else if (category === 'bmm') {
+                peopleInCategory = bmmPersonnel.filter(p => {
+                    // Only show BMM if they don't have an absence reported
+                    return !todayAbsences.some(a => a.personId === p.id);
+                });
+            }
+
+            const content = document.getElementById('category-content');
+            if (peopleInCategory.length === 0) {
+                content.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 40px;">No personnel in this category.</p>';
+            } else {
+                content.innerHTML = peopleInCategory.map(p => `
+                    <div class="absence-item">
+                        <div class="absence-name">${p.rank} ${p.lastName}, ${p.firstName}</div>
+                        ${p.reason ? `<div class="absence-reason">${p.reason}</div>` : ''}
+                        ${p.notes ? `<div class="absence-reason" style="font-style: italic;">${p.notes}</div>` : ''}
+                        ${p.lateType ? `<div class="absence-reason">${p.lateType === 'late<15' ? 'Late (<15 min)' : 'Late (>15 min)'}</div>` : ''}
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('category-modal').classList.add('active');
+        }
+
+        function renderFormationDetail() {
+            const today = new Date().toISOString().split('T')[0];
+            const container = document.getElementById('formation-detail');
+
+            const bmmPersonnel = personnel.filter(p => p.bmm);
+            const expectedPersonnel = currentFormation === '0800' 
+                ? personnel 
+                : personnel.filter(p => !p.bmm);
+
+            const todayAbsences = absences.filter(a => 
+                a.date === today && a.formations.includes(currentFormation)
+            );
+
+            // Separate absences into categories
+            const appointmentReasons = ['Medical Appointment', 'Physical Therapy', 'Mental Health Appointment'];
+            const appointmentAbsences = todayAbsences.filter(a => appointmentReasons.includes(a.reason));
+            const otherAbsences = todayAbsences.filter(a => !appointmentReasons.includes(a.reason) && a.reason !== 'Leave' && a.reason !== 'Pass');
+
+            // BMM personnel who have reported an absence should not be in BMM count
+            const bmmWithoutAbsence = bmmPersonnel.filter(p => !todayAbsences.some(a => a.personId === p.id));
+            const bmmCount = currentFormation === '0800' ? 0 : bmmWithoutAbsence.length;
+            
+            // Count stats
+            let ftrCount = 0;
+            let lateCount = 0;
+            let presentCount = 0;
+            
+            expectedPersonnel.forEach(p => {
+                const isAbsent = todayAbsences.some(a => a.personId === p.id);
+                if (!isAbsent) {
+                    const statusKey = `${today}-${currentFormation}-${p.id}`;
+                    const status = formationStatus[statusKey];
+                    if (status === 'present') presentCount++;
+                    else if (status === 'ftr') ftrCount++;
+                    else if (status && status.startsWith('late')) lateCount++;
+                }
+            });
+
+            const needCheckIn = expectedPersonnel.filter(p => {
+                const isAbsent = todayAbsences.some(a => a.personId === p.id);
+                return !isAbsent;
+            });
+
+            const totalExpected = expectedPersonnel.length;
+
+            container.innerHTML = `
+                <div class="formation-detail">
+                    <div class="formation-title">${currentFormation} Formation</div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-box" onclick="showCategoryView('present', 'Present')">
+                            <div class="stat-number" style="color: #34d399;">${presentCount}/${totalExpected}</div>
+                            <div class="stat-label">Present</div>
+                        </div>
+                        <div class="stat-box" onclick="showCategoryView('appointment', 'At Appointment')">
+                            <div class="stat-number" style="color: #3b82f6;">${appointmentAbsences.length}/${totalExpected}</div>
+                            <div class="stat-label">At Appointment</div>
+                        </div>
+                        <div class="stat-box" onclick="showCategoryView('absent', 'Absent')">
+                            <div class="stat-number" style="color: #dc2626;">${otherAbsences.length}/${totalExpected}</div>
+                            <div class="stat-label">Absent</div>
+                        </div>
+                        <div class="stat-box" onclick="showCategoryView('ftr', 'FTR')">
+                            <div class="stat-number" style="color: #f59e0b;">${ftrCount}/${totalExpected}</div>
+                            <div class="stat-label">FTR</div>
+                        </div>
+                        <div class="stat-box" onclick="showCategoryView('late', 'Late')">
+                            <div class="stat-number" style="color: #dc2626;">${lateCount}/${totalExpected}</div>
+                            <div class="stat-label">Late</div>
+                        </div>
+                        ${bmmCount > 0 ? `
+                        <div class="stat-box" onclick="showCategoryView('bmm', 'At BMM')">
+                            <div class="stat-number" style="color: #f59e0b;">${bmmCount}/${personnel.length}</div>
+                            <div class="stat-label">At BMM</div>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    ${currentFormation !== '0800' && bmmWithoutAbsence.length > 0 ? `
+                        <div class="section-title">BMM Personnel (Not Expected)</div>
+                        ${bmmWithoutAbsence.map(p => `
+                            <div class="bmm-item">
+                                <div class="absence-name">${p.rank} ${p.lastName}, ${p.firstName}</div>
+                                <div class="absence-reason">At BMM Job</div>
+                            </div>
+                        `).join('')}
+                    ` : ''}
+
+                    ${appointmentAbsences.length > 0 ? `
+                        <div class="section-title">At Appointments</div>
+                        ${appointmentAbsences.map(a => {
+                            const person = personnel.find(p => p.id === a.personId);
+                            return `
+                                <div class="absence-item" style="border-left-color: #3b82f6;">
+                                    <div class="absence-name">${person ? person.rank + ' ' + person.lastName + ', ' + person.firstName : 'Unknown'}</div>
+                                    <div class="absence-reason">${a.reason}</div>
+                                    ${a.notes ? `<div class="absence-reason" style="margin-top: 4px; font-style: italic;">${a.notes}</div>` : ''}
+                                    <button class="btn btn-danger" onclick="deleteAbsence(${a.id})" style="margin-top: 8px; padding: 6px 12px; font-size: 12px;">Remove</button>
+                                </div>
+                            `;
+                        }).join('')}
+                    ` : ''}
+
+                    ${otherAbsences.length > 0 ? `
+                        <div class="section-title">Other Absences</div>
+                        ${otherAbsences.map(a => {
+                            const person = personnel.find(p => p.id === a.personId);
+                            return `
+                                <div class="absence-item">
+                                    <div class="absence-name">${person ? person.rank + ' ' + person.lastName + ', ' + person.firstName : 'Unknown'}</div>
+                                    <div class="absence-reason">${a.reason}</div>
+                                    ${a.notes ? `<div class="absence-reason" style="margin-top: 4px; font-style: italic;">${a.notes}</div>` : ''}
+                                    <button class="btn btn-danger" onclick="deleteAbsence(${a.id})" style="margin-top: 8px; padding: 6px 12px; font-size: 12px;">Remove</button>
+                                </div>
+                            `;
+                        }).join('')}
+                    ` : ''}
+
+                    <div class="section-title">Formation Check-In</div>
+                    <p style="color: #9ca3af; margin-bottom: 12px; font-size: 14px;">Mark personnel as Present, FTR (Failure to Report), or Late. Click stat boxes above to see who's in each category.</p>
+                    ${needCheckIn.map(p => {
+                        const statusKey = `${today}-${currentFormation}-${p.id}`;
+                        const status = formationStatus[statusKey] || '';
+                        return `
+                            <div class="checklist-item">
+                                <div class="checklist-name">${p.rank} ${p.lastName}, ${p.firstName}</div>
+                                <div class="checklist-actions">
+                                    <button class="status-btn present ${status === 'present' ? 'active' : ''}" 
+                                            onclick="markStatus(${p.id}, 'present')">✓ Present</button>
+                                    <button class="status-btn ftr ${status === 'ftr' ? 'active' : ''}" 
+                                            onclick="markStatus(${p.id}, 'ftr')">⚠ FTR</button>
+                                    <button class="status-btn late ${status === 'late<15' ? 'active' : ''}" 
+                                            onclick="markStatus(${p.id}, 'late<15')">⏰ Late &lt;15</button>
+                                    <button class="status-btn late ${status === 'late>15' ? 'active' : ''}" 
+                                            onclick="markStatus(${p.id}, 'late>15')">🔴 Late &gt;15</button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function markStatus(personId, status) {
+            const today = new Date().toISOString().split('T')[0];
+            const statusKey = `${today}-${currentFormation}-${personId}`;
+            
+            if (formationStatus[statusKey] === status) {
+                delete formationStatus[statusKey];
+            } else {
+                formationStatus[statusKey] = status;
+            }
+            
+            saveData();
+            renderFormationDetail();
+        }
+
+        function showPersonHistory(personId) {
+            const person = personnel.find(p => p.id === personId);
+            if (!person) return;
+
+            document.getElementById('history-title').textContent = `${person.rank} ${person.lastName}, ${person.firstName} - Formation History`;
+
+            // Get all formation statuses for this person (excluding present, leave, pass)
+            const today = new Date().toISOString().split('T')[0];
+            const history = [];
+
+            // Get formation status history (FTR, Late)
+            Object.keys(formationStatus).forEach(key => {
+                const parts = key.split('-');
+                if (parts.length === 4 && parseInt(parts[3]) === personId) {
+                    const date = parts[0];
+                    const formation = parts[1];
+                    const status = formationStatus[key];
+                    
+                    if (status !== 'present' && date < today) {
+                        history.push({
+                            date: date,
+                            formation: formation,
+                            type: 'status',
+                            status: status
+                        });
+                    }
+                }
+            });
+
+            // Get absence history (excluding Leave and Pass)
+            const personAbsences = absences.filter(a => {
+                return a.personId === personId && 
+                       a.date < today && 
+                       a.reason !== 'Leave' && 
+                       a.reason !== 'Pass';
+            });
+
+            personAbsences.forEach(a => {
+                a.formations.forEach(formation => {
+                    history.push({
+                        date: a.date,
+                        formation: formation,
+                        type: 'absence',
+                        reason: a.reason,
+                        notes: a.notes
+                    });
+                });
+            });
+
+            // Sort by date (newest first)
+            history.sort((a, b) => b.date.localeCompare(a.date));
+
+            const content = document.getElementById('history-content');
+            
+            if (history.length === 0) {
+                content.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 40px;">No negative formation history found.</p>';
+            } else {
+                content.innerHTML = history.map(h => {
+                    const dateObj = new Date(h.date + 'T00:00:00');
+                    const dateStr = dateObj.toLocaleDateString('en-US', { 
+                        weekday: 'short', 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                    
+                    let detail = '';
+                    if (h.type === 'status') {
+                        if (h.status === 'ftr') detail = 'FTR (Failure to Report)';
+                        else if (h.status === 'late<15') detail = 'Late (<15 minutes)';
+                        else if (h.status === 'late>15') detail = 'Late (>15 minutes)';
+                    } else {
+                        detail = h.reason;
+                        if (h.notes) detail += ` - ${h.notes}`;
+                    }
+
+                    return `
+                        <div class="history-item">
+                            <div class="history-date">${dateStr} - ${h.formation} Formation</div>
+                            <div class="history-detail">${detail}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('history-modal').classList.add('active');
+        }
+
+        function renderRoster() {
+            const list = document.getElementById('roster-list');
+            if (personnel.length === 0) {
+                list.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 40px;">No personnel added yet.</p>';
+                return;
+            }
+
+            const sorted = [...personnel].sort((a, b) => {
+                if (a.lastName !== b.lastName) return a.lastName.localeCompare(b.lastName);
+                return a.firstName.localeCompare(b.firstName);
+            });
+
+            list.innerHTML = sorted.map(p => `
+                <div class="card person-card" onclick="showPersonHistory(${p.id})">
+                    <div>
+                        <div class="person-name">
+                            ${p.rank} ${p.lastName}, ${p.firstName}
+                            ${p.bmm ? '<span class="badge badge-bmm">BMM</span>' : ''}
+                            ${p.profile ? `<span class="badge badge-profile">${p.profile}</span>` : ''}
+                        </div>
+                        <p style="color: #9ca3af; font-size: 13px; margin-top: 4px;">Click to view formation history</p>
+                    </div>
+                    <div style="display: flex; gap: 8px;" onclick="event.stopPropagation()">
+                        <button class="btn btn-secondary" onclick="showEditPersonModal(${p.id})">✏️ Edit</button>
+                        <button class="btn btn-danger" onclick="deletePerson(${p.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderFutureAbsences() {
+            const today = new Date().toISOString().split('T')[0];
+            let futureAbsences = absences.filter(a => a.date > today).sort((a, b) => a.date.localeCompare(b.date));
+
+            // Apply search filter
+            if (futureSearchTerm) {
+                futureAbsences = futureAbsences.filter(a => {
+                    const person = personnel.find(p => p.id === a.personId);
+                    if (!person) return false;
+                    const fullName = `${person.rank} ${person.lastName}, ${person.firstName}`.toLowerCase();
+                    return fullName.includes(futureSearchTerm.toLowerCase());
+                });
+            }
+
+            const container = document.getElementById('future-absences-list');
+            if (futureAbsences.length === 0) {
+                if (futureSearchTerm) {
+                    container.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 40px;">No future absences found matching your search.</p>';
+                } else {
+                    container.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 40px;">No future absences scheduled.</p>';
+                }
+                return;
+            }
+
+            const grouped = {};
+            futureAbsences.forEach(a => {
+                if (!grouped[a.date]) grouped[a.date] = [];
+                grouped[a.date].push(a);
+            });
+
+            container.innerHTML = Object.keys(grouped).map(date => {
+                const dateObj = new Date(date + 'T00:00:00');
+                const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                
+                return `
+                    <div class="card">
+                        <h3 style="color: #34d399; margin-bottom: 16px;">${dateStr}</h3>
+                        ${grouped[date].map(a => {
+                            const person = personnel.find(p => p.id === a.personId);
+                            return `
+                                <div class="absence-item">
+                                    <div class="absence-name">${person ? person.rank + ' ' + person.lastName + ', ' + person.firstName : 'Unknown'}</div>
+                                    <div class="absence-reason">Formations: ${a.formations.join(', ')}</div>
+                                    <div class="absence-reason">Reason: ${a.reason}</div>
+                                    ${a.notes ? `<div class="absence-reason" style="margin-top: 4px; font-style: italic;">${a.notes}</div>` : ''}
+                                    <button class="btn btn-danger" onclick="deleteAbsence(${a.id})" style="margin-top: 8px; padding: 6px 12px; font-size: 12px;">Remove</button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function clearFutureSearch() {
+            futureSearchTerm = '';
+            document.getElementById('future-search').value = '';
+            renderFutureAbsences();
+        }
+
+        function populateSelfReportNames() {
+            const select = document.getElementById('self-name');
+            const sorted = [...personnel].sort((a, b) => {
+                if (a.lastName !== b.lastName) return a.lastName.localeCompare(b.lastName);
+                return a.firstName.localeCompare(b.firstName);
+            });
+            select.innerHTML = '<option value="">-- Select Your Name --</option>' + 
+                sorted.map(p => `<option value="${p.id}">${p.rank} ${p.lastName}, ${p.firstName}</option>`).join('');
+        }
+
+        function toggleNotesRequired() {
+            const reason = document.getElementById('self-reason').value;
+            const notesLabel = document.getElementById('self-notes-label');
+            if (reason === 'Other') {
+                notesLabel.textContent = 'Additional Details (Required for "Other") *';
+                notesLabel.style.color = '#fbbf24';
+            } else {
+                notesLabel.textContent = 'Additional Details (Optional)';
+                notesLabel.style.color = '#d1d5db';
+            }
+        }
+
+        function submitSelfReport() {
+            const personId = parseInt(document.getElementById('self-name').value);
+            const date = document.getElementById('self-date').value;
+            const reason = document.getElementById('self-reason').value;
+            const notes = document.getElementById('self-notes').value.trim();
+
+            const selectedFormations = [];
+            if (document.getElementById('self-0800').checked) selectedFormations.push('0800');
+            if (document.getElementById('self-1100').checked) selectedFormations.push('1100');
+            if (document.getElementById('self-1400').checked) selectedFormations.push('1400');
+
+            if (!personId || !date || selectedFormations.length === 0) {
+                alert('Please fill out all required fields (Name, Date, and at least one Formation).');
+                return;
+            }
+
+            if (reason === 'Other' && !notes) {
+                alert('Please provide additional details when selecting "Other" as the reason.');
+                return;
+            }
+
+            const newId = absences.length > 0 ? Math.max(...absences.map(a => a.id)) + 1 : 1;
+            absences.push({
+                id: newId,
+                personId: personId,
+                date: date,
+                formations: selectedFormations,
+                reason: reason,
+                notes: notes
+            });
+
+            saveData();
+            alert('Absence reported successfully!');
+            
+            // Clear form
+            document.getElementById('self-name').value = '';
+            document.getElementById('self-date').valueAsDate = new Date();
+            document.getElementById('self-0800').checked = false;
+            document.getElementById('self-1100').checked = false;
+            document.getElementById('self-1400').checked = false;
+            document.getElementById('self-reason').value = 'Medical Appointment';
+            document.getElementById('self-notes').value = '';
+            toggleNotesRequired();
+        }
+
+        function showAddPersonModal() {
+            document.getElementById('add-person-modal').classList.add('active');
+        }
+
+        function showEditPersonModal(id) {
+            const person = personnel.find(p => p.id === id);
+            document.getElementById('edit-id').value = person.id;
+            document.getElementById('edit-firstname').value = person.firstName;
+            document.getElementById('edit-lastname').value = person.lastName;
+            document.getElementById('edit-rank').value = person.rank;
+            document.getElementById('edit-bmm').checked = person.bmm;
+            document.getElementById('edit-profile').value = person.profile || '';
+            document.getElementById('edit-person-modal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function addPerson() {
+            const firstName = document.getElementById('new-firstname').value.trim();
+            const lastName = document.getElementById('new-lastname').value.trim();
+            const rank = document.getElementById('new-rank').value;
+            
+            if (!firstName || !lastName || !rank) {
+                alert('Please enter first name, last name, and rank.');
+                return;
+            }
+
+            const newId = personnel.length > 0 ? Math.max(...personnel.map(p => p.id)) + 1 : 1;
+            personnel.push({
+                id: newId,
+                firstName: firstName,
+                lastName: lastName,
+                rank: rank,
+                bmm: document.getElementById('new-bmm').checked,
+                profile: document.getElementById('new-profile').value
+            });
+
+            saveData();
+            renderRoster();
+            closeModal('add-person-modal');
+            
+            // Clear form
+            document.getElementById('new-firstname').value = '';
+            document.getElementById('new-lastname').value = '';
+            document.getElementById('new-rank').value = '';
+            document.getElementById('new-bmm').checked = false;
+            document.getElementById('new-profile').value = '';
+        }
+
+        function savePerson() {
+            const id = parseInt(document.getElementById('edit-id').value);
+            const index = personnel.findIndex(p => p.id === id);
+            
+            const firstName = document.getElementById('edit-firstname').value.trim();
+            const lastName = document.getElementById('edit-lastname').value.trim();
+            const rank = document.getElementById('edit-rank').value;
+            
+            if (!firstName || !lastName || !rank) {
+                alert('Please enter first name, last name, and rank.');
+                return;
+            }
+            
+            personnel[index] = {
+                id: id,
+                firstName: firstName,
+                lastName: lastName,
+                rank: rank,
+                bmm: document.getElementById('edit-bmm').checked,
+                profile: document.getElementById('edit-profile').value
+            };
+
+            saveData();
+            renderRoster();
+            closeModal('edit-person-modal');
+        }
+
+        function deletePerson(id) {
+            if (confirm('Remove this person from the roster? This will also delete their absence reports and formation history.')) {
+                personnel = personnel.filter(p => p.id !== id);
+                absences = absences.filter(a => a.personId !== id);
+                
+                // Remove their formation status entries
+                Object.keys(formationStatus).forEach(key => {
+                    if (key.includes(`-${id}`)) {
+                        delete formationStatus[key];
+                    }
+                });
+                
+                saveData();
+                renderRoster();
+            }
+        }
+
+        function deleteAbsence(id) {
+            if (confirm('Remove this absence report?')) {
+                absences = absences.filter(a => a.id !== id);
+                saveData();
+                renderFormationDetail();
+                renderFutureAbsences();
+            }
+        }
+
+        function saveData() {
+            const data = { personnel, absences, formationStatus };
+            localStorage.setItem('accountabilityData', JSON.stringify(data));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('accountabilityData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                personnel = data.personnel || [];
+                absences = data.absences || [];
+                formationStatus = data.formationStatus || {};
+            }
+        }
+
+        function exportData() {
+            const data = { personnel, absences, formationStatus };
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'accountability_' + new Date().toISOString().split('T')[0] + '.json';
+            link.click();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        personnel = data.personnel || [];
+                        absences = data.absences || [];
+                        formationStatus = data.formationStatus || {};
+                        saveData();
+                        renderRoster();
+                        alert('Data imported successfully!');
+                    } catch (err) {
+                        alert('Error importing file. Please make sure it\'s a valid JSON file.');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        // Event listener for future search
+        document.getElementById('future-search').addEventListener('input', function(e) {
+            futureSearchTerm = e.target.value;
+            renderFutureAbsences();
+        });
+
+        // Initialize
+        loadData();
+        renderRoster();
+        
+        // Set default date to today for self-report
+        document.getElementById('self-date').valueAsDate = new Date();
+    </script>
+</body>
+</html>
